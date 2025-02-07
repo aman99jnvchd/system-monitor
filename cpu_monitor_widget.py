@@ -38,17 +38,17 @@ class App(ctk.CTk):
         # Theme Toggle Button
         self.toggle_btn = ctk.CTkButton(
             self,
-            text="🌕",
+            text=" Day ",
             width=30,
-            height=35,
+            height=30,
             anchor="center",
             corner_radius=0,
             fg_color="transparent",
             hover_color="#E7A911",
             command=self.toggle_theme,
-            font=ctk.CTkFont(size=17)
+            font=ctk.CTkFont(size=12, weight="bold")
         )
-        self.toggle_btn.place(relx=0.9, rely=-0.03)
+        self.toggle_btn.place(relx=0.87, rely=0)
 
         # Header
         self.header = ctk.CTkLabel(
@@ -150,11 +150,14 @@ class App(ctk.CTk):
         if current_mode == "Dark":
             new_mode = "Light"
             self.close_btn.configure(fg_color="#DC3545")
-            self.toggle_btn.configure(text="🌙", fg_color="#3a90c9", hover_color="#3a90c9")
+            self.toggle_btn.configure(text=" Night ", fg_color="#3a90c9", hover_color="#3a90c9")
+            self.toggle_btn.place(relx=0.84, rely=0)
         else:
             new_mode = "Dark"
             self.close_btn.configure(fg_color="transparent")
-            self.toggle_btn.configure(text="🌕", fg_color="transparent", hover_color="#E7A911")
+            self.toggle_btn.configure(text=" Day ", fg_color="transparent", hover_color="#E7A911")
+            self.toggle_btn.place(relx=0.87, rely=0)
+
         # set new theme
         ctk.set_appearance_mode(new_mode)
 
