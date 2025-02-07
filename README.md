@@ -83,7 +83,32 @@ Make sure VcXsrv is running on your Windows host, then run:
 docker run -it --rm system-monitor
 ```
 
-This command will launch the application inside the container and forward the GUI output to your X server on Windows.
+With the Dockerfile now pre-configured, the container automatically has all required GUI libraries installed and the `DISPLAY` variable set to `host.docker.internal:0.0`, so your application should open on your Windows desktop via VcXsrv.
+
+### Troubleshooting GUI Issues
+
+- **DISPLAY Variable:**
+
+  - If you encounter errors like `TclError: no display name and no $DISPLAY environment variable`, verify that the `DISPLAY` variable is correctly set inside the container by running:
+    ```bash
+    echo $DISPLAY
+    ```
+  - You can also try explicitly passing your Windows host’s IP address if needed. For example, if your Windows host IP is `192.168.1.100`, run:
+    ```bash
+    docker run -it --rm -e DISPLAY=192.168.1.100:0.0 system-monitor
+    ```
+
+- **Firewall Settings:**
+
+  - Ensure that your Windows firewall is not blocking connections on TCP port 6000. You can add a rule in Windows Defender Firewall to allow this traffic.
+
+- **Testing X11:**
+
+  - To test that the X server is accepting connections, run a simple GUI app inside the container (e.g., `xclock`):
+    ```bash
+    docker run -it --rm system-monitor xclock
+    ```
+  - If `xclock` appears on your Windows desktop, then the X11 forwarding is working correctly.
 
 ## License
 
