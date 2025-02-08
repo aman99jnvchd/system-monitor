@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/aman99jnvchd/system-monitor.git'
+                git branch: 'main', url: 'https://github.com/aman99jnvchd/system-monitor.git'
             }
         }
 
@@ -22,21 +22,11 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    sh 'echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin'
-                    sh 'docker push $IMAGE_NAME'
+                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
+                    sh "docker push $DOCKER_IMAGE"
                 }
             }
         }
-
-        // stage('Deploy (Optional)') {
-        //     steps {
-        //         script {
-        //             sh 'docker pull $IMAGE_NAME'
-        //             sh 'docker run -d --rm -p 5000:5000 $IMAGE_NAME'
-        //         }
-        //     }
-        // }
     }
 
     post {
