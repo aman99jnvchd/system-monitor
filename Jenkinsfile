@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'aman99jnvchd/system-monitor'
+        DOCKER_IMAGE = "aman99jnvchd/system-monitor"
     }
 
     stages {
@@ -15,7 +15,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t $IMAGE_NAME .'
+                    sh "docker build -t $DOCKER_IMAGE ."
                 }
             }
         }
@@ -37,5 +37,14 @@ pipeline {
         //         }
         //     }
         // }
+    }
+
+    post {
+        success {
+            echo "✅ Build and push successful!"
+        }
+        failure {
+            echo "❌ Build failed!"
+        }
     }
 }
