@@ -1,26 +1,26 @@
 # System Usage Monitor
 
-A simple system usage monitor built using [psutil](https://pypi.org/project/psutil/) and [customtkinter](https://github.com/TomSchimansky/CustomTkinter). This application displays real-time usage statistics for CPU, memory, and disk usage in a sleek, customizable window with support for light/dark themes.
+A simple system usage monitor built using [psutil](https://pypi.org/project/psutil/) and [customtkinter](https://github.com/TomSchimansky/CustomTkinter). This application displays real-time usage statistics for CPU, memory, disk, and network speed in a sleek, customizable window with support for light/dark themes.
 
 > **Note:** When running the application inside a Docker container, extra steps are required to enable GUI (X11) support.
 
 ## Features
 
-- **Real-time system stats:** Displays up-to-date CPU, memory, and disk usage.
+- **Real-time system stats:** Displays up-to-date CPU, memory, disk usage, and network speed.
 - **Customizable UI:** Easily toggle between light and dark themes.
-- **Draggable Window:** The window can be moved around with a simple mouse drag.
-- **Responsive Design:** The UI updates every 2 seconds with live system stats.
+- **Draggable Window:** Move the window anywhere with a simple mouse drag.
+- **Live Updates:** The UI refreshes every 2 seconds to display real-time stats.
 
 ## Installation (Local)
 
-To run this application locally (outside of Docker), run:
+To run this application locally, install the dependencies:
 
 ```bash
 pip install psutil customtkinter
 ```
 
 ### Tkinter Dependency
-Make sure your Python installation includes Tkinter. On some Linux distributions, you might need to install an additional package:
+Ensure your Python installation includes Tkinter. On some Linux distributions, you may need to install it manually:
 
 ```bash
 sudo apt-get install python3-tk
@@ -29,13 +29,13 @@ sudo apt-get install python3-tk
 ## Running with Docker
 
 ### Prerequisites
-- **Docker Desktop for Windows** (or your platform of choice).
+- **Docker Desktop for Windows** (or your preferred platform).
 - **An X Server on Windows:**  
-  Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/) (or an equivalent X server) and launch it with the following settings:
+  Install [VcXsrv](https://sourceforge.net/projects/vcxsrv/) (or another X server) and launch it with the following settings:
   - **Multiple Windows**
   - **Start no client**
   - **Disable access control**
-- **Windows Firewall:** Ensure that inbound and outbound TCP connections on port **6000** are allowed.
+- **Windows Firewall:** Allow inbound and outbound TCP connections on port **6000**.
 
 ### Dockerfile
 
@@ -77,38 +77,38 @@ docker build -t system-monitor .
 
 ### Running the Docker Container
 
-Make sure VcXsrv is running on your Windows host, then run:
+Ensure VcXsrv is running on your Windows host, then execute:
 
 ```bash
 docker run -it --rm system-monitor
 ```
 
-With the Dockerfile now pre-configured, the container automatically has all required GUI libraries installed and the `DISPLAY` variable set to `host.docker.internal:0.0`, so your application should open on your Windows desktop via VcXsrv.
+This Dockerfile is pre-configured with all necessary GUI libraries, and the `DISPLAY` variable is set to `host.docker.internal:0.0`, allowing the application to open on your Windows desktop via VcXsrv.
 
 ### Troubleshooting GUI Issues
 
 - **DISPLAY Variable:**
 
-  - If you encounter errors like `TclError: no display name and no $DISPLAY environment variable`, verify that the `DISPLAY` variable is correctly set inside the container by running:
+  - If you see errors like `TclError: no display name and no $DISPLAY environment variable`, verify the `DISPLAY` variable inside the container:
     ```bash
     echo $DISPLAY
     ```
-  - You can also try explicitly passing your Windows host’s IP address if needed. For example, if your Windows host IP is `192.168.1.100`, run:
+  - Alternatively, explicitly pass your Windows host’s IP address. If your Windows host IP is `192.168.1.100`, run:
     ```bash
     docker run -it --rm -e DISPLAY=192.168.1.100:0.0 system-monitor
     ```
 
 - **Firewall Settings:**
 
-  - Ensure that your Windows firewall is not blocking connections on TCP port 6000. You can add a rule in Windows Defender Firewall to allow this traffic.
+  - Ensure that Windows Firewall allows connections on TCP port 6000.
 
 - **Testing X11:**
 
-  - To test that the X server is accepting connections, run a simple GUI app inside the container (e.g., `xclock`):
+  - To check if the X server is accepting connections, try launching a GUI app inside the container (e.g., `xclock`):
     ```bash
     docker run -it --rm system-monitor xclock
     ```
-  - If `xclock` appears on your Windows desktop, then the X11 forwarding is working correctly.
+  - If `xclock` appears on your Windows desktop, X11 forwarding is working correctly.
 
 ## License
 
