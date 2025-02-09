@@ -5,7 +5,7 @@ class App(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.overrideredirect(True)
-        self.geometry("300x200+10+10")
+        self.geometry("350x250+10+10")
 
         # Set default theme
         ctk.set_appearance_mode("Dark")
@@ -48,7 +48,7 @@ class App(ctk.CTk):
             command=self.toggle_theme,
             font=ctk.CTkFont(size=12, weight="bold")
         )
-        self.toggle_btn.place(relx=0.87, rely=0)
+        self.toggle_btn.place(relx=0.89, rely=0)
 
         # Header
         self.header = ctk.CTkLabel(
@@ -56,23 +56,25 @@ class App(ctk.CTk):
             text="System Usage",
             font=ctk.CTkFont(size=18, weight="bold")
         )
-        self.header.pack(side="top", padx=20, pady=20)
+        self.header.pack(side="top", padx=20, pady=(35, 15))
 
         # Create Metrics
         self.cpu_label = self.create_metric("CPU")
         self.memory_label = self.create_metric("Memory")
         self.disk_label = self.create_metric("Disk")
+        self.network_label = self.create_metric("Network")
+
+        # Store previous network data
+        self.prev_bytes_sent, self.prev_bytes_recv = self.get_network_data()
 
         # Update Metrics
         self.update_metrics()
     
-    # when starts moving
     def start_move(self, event):
-        """This method is called when the user clicks the mouse to start dragging."""
+        """ Track initial position when dragging starts """
         self._offset_x = event.x
         self._offset_y = event.y
 
-    # move window
     def on_move(self, event):
         """This method is called when the user moves the mouse while holding down the left button."""
         delta_x = event.x - self._offset_x
@@ -82,18 +84,18 @@ class App(ctk.CTk):
         new_y = self.winfo_y() + delta_y
         self.geometry(f"+{new_x}+{new_y}")
 
-    # Create Metric
     def create_metric(self, name):
+        """ Create a labeled metric display """
         frame = ctk.CTkFrame(self, fg_color="transparent")
         frame.pack(pady=5, padx=30, fill="x")
-        # label
+        # Label
         label = ctk.CTkLabel(
             frame,
             text=name,
             font=ctk.CTkFont(size=14, weight="bold")
         )
         label.pack(side="left")
-        # value
+        # Value
         value = ctk.CTkLabel(
             frame,
             text="0%",
@@ -103,61 +105,69 @@ class App(ctk.CTk):
         value.pack(side="right")
         return value
 
-    # Update Metrics
+    def get_network_data(self):
+        """ Get current network I/O data """
+        net_io = psutil.net_io_counters()
+        return net_io.bytes_sent, net_io.bytes_recv
+
     def update_metrics(self):
+        """ Update system metrics and network speed """
         cpu = psutil.cpu_percent()
         memory = psutil.virtual_memory().percent
         disk = psutil.disk_usage('/').percent
+
         # updating usage
         self.cpu_label.configure(text=f"{cpu}%")
         self.memory_label.configure(text=f"{memory}%")
         self.disk_label.configure(text=f"{disk}%")
+
         # change color after certain threshold - CPU
-        if cpu > 50:
-            if cpu > 90:
-                self.cpu_label.configure(text_color="#DC3545")
-            else:
-                self.cpu_label.configure(text_color="#E7A911")
-        else:
-            self.cpu_label.configure(text_color="#28A745")
-        # memory
-        if memory > 50:
-            if memory > 90:
-                self.memory_label.configure(text_color="#DC3545")
-            else:
-                self.memory_label.configure(text_color="#E7A911")
-        else:
-            self.memory_label.configure(text_color="#28A745")
-        # disk
-        if disk > 50:
-            if disk > 90:
-                self.disk_label.configure(text_color="#DC3545")
-            else:
-                self.disk_label.configure(text_color="#E7A911")
-        else:
-            self.disk_label.configure(text_color="#28A745")
+        self.set_label_color(self.cpu_label, cpu)
+        self.set_label_color(self.memory_label, memory)
+        self.set_label_color(self.disk_label, disk)
+
+        # Calculate Network Speed
+        new_bytes_sent, new_bytes_recv = self.get_network_data()
+        upload_speed = (new_bytes_sent - self.prev_bytes_sent) / 1024 / 2  # KB/s
+        download_speed = (new_bytes_recv - self.prev_bytes_recv) / 1024 / 2 # KB/s
+
+        # Store current values for next calculation
+        self.prev_bytes_sent, self.prev_bytes_recv = new_bytes_sent, new_bytes_recv
+        # Update Network Label
+        self.network_label.configure(text=f"↑ {upload_speed:.1f} KB/s ↓ {download_speed:.1f} KB/s")
 
         # calling itself after every 2 seconds
         self.after(2000, self.update_metrics)
 
-    # Close Window
+    def set_label_color(self, label, usage):
+        """ Change label color based on usage percentage """
+        if usage > 50:
+            if usage > 90:
+                label.configure(text_color="#DC3545")  # Red
+            else:
+                label.configure(text_color="#E7A911")  # Yellow
+        else:
+            label.configure(text_color="#28A745")  # Green
+
     def on_close(self):
+        """ Close the application """
         self.destroy()
 
-    # Toggle Between Themes
     def toggle_theme(self):
+        """ Toggle between Dark and Light themes """
         current_mode = ctk.get_appearance_mode()
         new_mode = "Light" if current_mode == "Dark" else "Dark"
+
         if current_mode == "Dark":
             new_mode = "Light"
             self.close_btn.configure(fg_color="#DC3545")
             self.toggle_btn.configure(text=" Night ", fg_color="#3a90c9", hover_color="#3a90c9")
-            self.toggle_btn.place(relx=0.84, rely=0)
+            self.toggle_btn.place(relx=0.862, rely=0)
         else:
             new_mode = "Dark"
             self.close_btn.configure(fg_color="transparent")
             self.toggle_btn.configure(text=" Day ", fg_color="transparent", hover_color="#E7A911")
-            self.toggle_btn.place(relx=0.87, rely=0)
+            self.toggle_btn.place(relx=0.89, rely=0)
 
         # set new theme
         ctk.set_appearance_mode(new_mode)
