@@ -66,6 +66,7 @@ class App(ctk.CTk):
         # Update Metrics
         self.update_metrics()
     
+    # when starts moving
     def start_move(self, event):
         """This method is called when the user clicks the mouse to start dragging."""
         self._offset_x = event.x
