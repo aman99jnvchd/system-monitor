@@ -44,7 +44,7 @@ pipeline {
 
                         echo "🚀 Running new container..."
                         # sudo docker run -d --name my_app -p 80:5000 --restart unless-stopped $DOCKER_IMAGE:latest
-                    EOF
+EOF
                     '''
                 }
             }
