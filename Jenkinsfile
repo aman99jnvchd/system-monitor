@@ -32,7 +32,7 @@ pipeline {
         
         stage('Deploy to EC2') {
             steps {
-                sshagent(['ec2-ssh-key']) {
+                sshagent(credentials: ['ec2-ssh-key']) {
                     sh '''
                     ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST <<EOF
                     echo "🔄 Pulling latest image..."
@@ -43,7 +43,7 @@ pipeline {
                     sudo docker rm my_app || true
 
                     echo "🚀 Running new container..."
-                    sudo docker run -d --name my_app -p 80:5000 --restart unless-stopped $DOCKER_IMAGE:latest
+                    # sudo docker run -d --name my_app -p 80:5000 --restart unless-stopped $DOCKER_IMAGE:latest
                     EOF
                     '''
                 }
