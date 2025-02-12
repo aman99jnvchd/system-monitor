@@ -29,21 +29,21 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to EC2') {
             steps {
-                sshagent(credentials: ['ec2-ssh-key']) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                     sh '''
-                    ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST <<EOF
-                    echo "🔄 Pulling latest image..."
-                    sudo docker pull $DOCKER_IMAGE:latest
+                    ssh -o StrictHostKeyChecking=no -i $SSH_KEY $EC2_USER@$EC2_HOST <<EOF
+                        echo "🔄 Pulling latest image..."
+                        sudo docker pull $DOCKER_IMAGE:latest
 
-                    echo "🛑 Stopping and removing existing container..."
-                    sudo docker stop my_app || true
-                    sudo docker rm my_app || true
+                        echo "🛑 Stopping and removing existing container..."
+                        sudo docker stop my_app || true
+                        sudo docker rm my_app || true
 
-                    echo "🚀 Running new container..."
-                    # sudo docker run -d --name my_app -p 80:5000 --restart unless-stopped $DOCKER_IMAGE:latest
+                        echo "🚀 Running new container..."
+                        # sudo docker run -d --name my_app -p 80:5000 --restart unless-stopped $DOCKER_IMAGE:latest
                     EOF
                     '''
                 }
