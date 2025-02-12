@@ -17,7 +17,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t $DOCKER_IMAGE:latest ."
+                    sh "docker build -t $DOCKER_IMAGE ."
                 }
             }
         }
@@ -25,11 +25,11 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh "docker push $DOCKER_IMAGE:latest"
+                    sh "docker push $DOCKER_IMAGE"
                 }
             }
         }
-
+        
         stage('Deploy to EC2') {
             steps {
                 sshagent(['ec2-ssh-key']) {
