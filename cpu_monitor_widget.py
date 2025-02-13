@@ -1,4 +1,6 @@
+import time
 import psutil
+import tkinter
 import customtkinter as ctk
 
 class App(ctk.CTk):
@@ -172,7 +174,38 @@ class App(ctk.CTk):
         # set new theme
         ctk.set_appearance_mode(new_mode)
 
+def run_cli():
+    """ Run system usage monitoring in command line """
+    prev_sent, prev_recv = psutil.net_io_counters().bytes_sent, psutil.net_io_counters().bytes_recv
+    try:
+        while True:
+            cpu = psutil.cpu_percent()
+            memory = psutil.virtual_memory().percent
+            disk = psutil.disk_usage('/').percent
+            new_sent, new_recv = psutil.net_io_counters().bytes_sent, psutil.net_io_counters().bytes_recv
+
+            upload_speed = (new_sent - prev_sent) / 1024 / 2  # KB/s
+            download_speed = (new_recv - prev_recv) / 1024 / 2
+
+            prev_sent, prev_recv = new_sent, new_recv            
+            
+            # Clear line and print with fixed-width formatting
+            output = (
+                f"\r\033[KCPU: {cpu:5.1f}% | "
+                f"Memory: {memory:5.1f}% | "
+                f"Disk: {disk:5.1f}% | "
+                f"Upload: {upload_speed:6.1f} KB/s | "
+                f"Download: {download_speed:6.1f} KB/s"
+            )
+            print(output, end='', flush=True)
+
+            time.sleep(2)
+    except KeyboardInterrupt:
+        print("\nExiting...")
 
 if __name__ == "__main__":
-    app = App()
-    app.mainloop()
+    try:
+        app = App()
+        app.mainloop()
+    except tkinter.TclError:
+        run_cli()
