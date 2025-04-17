@@ -6,6 +6,12 @@ pipeline {
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()  // Jenkins built-in step to wipe workspace
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git branch: 'master', url: 'https://github.com/aman99jnvchd/system-monitor.git'
