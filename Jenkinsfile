@@ -8,13 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'github-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                    sh '''
-                    eval "$(ssh-agent -s)"
-                    ssh-add $SSH_KEY
-                    git clone git@github.com:aman99jnvchd/system-monitor.git
-                    '''
-                }
+                git branch: 'master', url: 'https://github.com/aman99jnvchd/system-monitor.git'
             }
         }
 
