@@ -3,12 +3,14 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "aman99jnvchd/system-monitor"
+        DOCKER_CONTAINER = "system-monitor"
     }
 
     stages {
         stage('Clean Workspace') {
             steps {
-                cleanWs()  // Jenkins built-in step to wipe workspace
+                /* Jenkins built-in step to wipe workspace */
+                cleanWs()
             }
         }
 
@@ -22,6 +24,19 @@ pipeline {
             steps {
                 script {
                     sh "docker build -t $DOCKER_IMAGE ."
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    /* Stop and remove old container if exists */
+                    sh "docker stop $DOCKER_CONTAINER || true"
+                    sh "docker rm -f $DOCKER_CONTAINER || true"
+
+                    /* Run new container */
+                    sh "docker run -d --name $DOCKER_CONTAINER -p 8800:8800 $DOCKER_IMAGE"
                 }
             }
         }
