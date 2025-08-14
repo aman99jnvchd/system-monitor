@@ -143,31 +143,6 @@ This project includes a Jenkins pipeline (`Jenkinsfile`) that automates:
 4. **Run Container** - Deploys the application
 5. **Push to Docker Hub** - Publishes the image to Docker Hub
 
-### Jenkins Pipeline Features
-- Automated Docker image building
-- Container deployment and management
-- Docker Hub integration
-- Cleanup and error handling
-
-## 🎨 GUI Features
-
-- **Modern Interface:** Built with CustomTkinter for a sleek appearance
-- **Theme Switching:** Toggle between light and dark themes
-- **Draggable Window:** Click and drag to move the window anywhere
-- **Real-time Updates:** Metrics refresh every second
-- **Color-coded Metrics:** Visual indicators for usage levels
-- **Always on Top:** Window stays visible above other applications
-- **Responsive Design:** Adapts to different screen sizes
-
-## 📊 Metrics Collection
-
-The application monitors:
-
-- **CPU Usage:** Real-time CPU utilization percentage
-- **Memory Usage:** RAM usage percentage
-- **Disk Usage:** Root filesystem usage percentage
-- **Network Speed:** Upload and download speeds in KB/s
-
 ## 🔧 Troubleshooting
 
 ### GUI Issues
@@ -191,16 +166,6 @@ The application monitors:
     docker run -it --rm system-monitor xclock
     ```
   - If `xclock` appears on your Windows desktop, X11 forwarding is working correctly
-
-### CLI Fallback
-If GUI mode fails, the application automatically switches to CLI mode, displaying metrics in the terminal with real-time updates.
-
-## 📝 Dependencies
-
-- **psutil** - System and process utilities
-- **customtkinter** - Modern Tkinter widgets
-- **fastapi** - Web framework for building APIs
-- **uvicorn** - ASGI server for FastAPI
 
 ## 🤝 Contributing
 
